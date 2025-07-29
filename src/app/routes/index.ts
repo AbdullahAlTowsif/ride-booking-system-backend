@@ -15,7 +15,7 @@ const moduleRoutes = [
         route: AuthRoutes
     },
     {
-        path: "/ride",
+        path: "/rides",
         route: RideRoutes
     }
 ];

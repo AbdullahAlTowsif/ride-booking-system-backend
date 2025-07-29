@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Request, Response, NextFunction } from 'express';
 import { RideService } from './ride.service';
 import { catchAsync } from '../../utils/catchAsync';
@@ -6,7 +7,6 @@ import httpStatus from 'http-status-codes';
 import { JwtPayload } from 'jsonwebtoken';
 
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const createRide = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
   const rider = req.user;
@@ -24,6 +24,25 @@ const createRide = catchAsync(async (req: Request, res: Response, next: NextFunc
   });
 });
 
+
+const cancelRide = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const rideId = req.params.id;
+    const rider = req.user;
+    const {userId: riderId} = rider as JwtPayload
+
+    const result = await RideService.cancelRide(rideId, riderId);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: 'Ride cancelled successfully',
+      data: result,
+    });
+  }
+);
+
 export const RideController = {
   createRide,
+  cancelRide,
 };
