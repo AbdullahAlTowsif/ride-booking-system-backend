@@ -84,8 +84,6 @@ const cancelRide = async (rideId: string, riderId: string) => {
 const getMyRides = async (riderId: string) => {
   const rides = await Ride.find({ rider: riderId })
     .sort({ createdAt: -1 })
-    .populate('driver', 'name email') // optional
-    .lean();
 
   return rides;
 };
@@ -96,7 +94,7 @@ const getSingleRide = async (rideId: string, riderId: string) => {
     throw new AppError(httpStatus.BAD_REQUEST, 'Invalid ride ID');
   }
 
-  const ride = await Ride.findById(rideId).populate('driver', 'name email');
+  const ride = await Ride.findById(rideId)
 
   if (!ride) {
     throw new AppError(httpStatus.NOT_FOUND, 'Ride not found');
