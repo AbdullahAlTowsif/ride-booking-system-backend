@@ -80,7 +80,38 @@ const cancelRide = async (rideId: string, riderId: string) => {
   return ride;
 };
 
+
+const getMyRides = async (riderId: string) => {
+  const rides = await Ride.find({ rider: riderId })
+    .sort({ createdAt: -1 })
+    .populate('driver', 'name email') // optional
+    .lean();
+
+  return rides;
+};
+
+
+const getSingleRide = async (rideId: string, riderId: string) => {
+  if (!isValidObjectId(rideId)) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Invalid ride ID');
+  }
+
+  const ride = await Ride.findById(rideId).populate('driver', 'name email');
+
+  if (!ride) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Ride not found');
+  }
+
+  if (ride.rider.toString() !== riderId) {
+    throw new AppError(httpStatus.FORBIDDEN, 'You are not authorized to view this ride');
+  }
+
+  return ride;
+};
+
 export const RideService = {
   createRide,
   cancelRide,
+  getMyRides,
+  getSingleRide,
 };
