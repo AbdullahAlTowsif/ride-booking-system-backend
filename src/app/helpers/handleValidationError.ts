@@ -14,7 +14,6 @@ export const hanldeValidationError = ( error: mongoose.Error.ValidationError ): 
       message: errObj.message,
     })
   );
-  // message = error.message;
 
   return {
     statusCode: 400,

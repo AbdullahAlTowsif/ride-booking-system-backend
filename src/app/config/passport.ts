@@ -64,7 +64,7 @@ passport.use(
 
         return done(null, isUserExist);
       } catch (error) {
-        console.log("LocalStrategy Error", error);
+        // console.log("LocalStrategy Error", error);
         done(error);
       }
     }
@@ -112,7 +112,7 @@ passport.use(
             email,
             name: profile.displayName,
             picture: profile.photos?.[0].value,
-            role: Role.USER,
+            role: Role.RIDER,
             isVerified: true,
             auths: [
               {
@@ -124,7 +124,7 @@ passport.use(
         }
         return done(null, isUserExist);
       } catch (error) {
-        console.log("Google Strategy Error", error);
+        // console.log("Google Strategy Error", error);
         return done(error);
       }
     }

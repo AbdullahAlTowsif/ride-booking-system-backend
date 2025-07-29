@@ -2,7 +2,7 @@ import { Types } from "mongoose"
 
 export enum Role {
     ADMIN = "ADMIN",
-    USER = "USER",
+    RIDER = "RIDER",
     DRIVER = "DRIVER"
 }
 
