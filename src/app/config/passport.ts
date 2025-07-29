@@ -93,8 +93,6 @@ passport.use(
         let isUserExist = await User.findOne({ email });
 
         if (isUserExist && !isUserExist.isVerified) {
-          // throw new AppError(httpStatus.BAD_REQUEST, "User is not Verified");
-          // done("User is not Verified");
           return done(null, false, {message: "User is not Verified"})
         }
 
