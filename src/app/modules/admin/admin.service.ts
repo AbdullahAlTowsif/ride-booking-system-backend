@@ -4,6 +4,7 @@ import { Driver } from "../driver/driver.model";
 import { IsApprove } from "../driver/driver.interface";
 import { User } from "../user/user.model";
 import { IsBlock } from "../user/user.interface";
+import { Ride } from "../ride/ride.model";
 
 const approveDriver = async (driverId: string) => {
   const existingDriver = await Driver.findById(driverId);
@@ -73,9 +74,26 @@ const unblockUser = async (userId: string) => {
   return existingUser;
 };
 
+const getAllUsers = async () => {
+  return await User.find().select("-password");
+};
+
+const getAllDrivers = async () => {
+  return await Driver.find().populate("user", "-password");
+};
+
+const getAllRides = async () => {
+  return await Ride.find()
+    .populate("rider", "-password")
+    .populate("driver");
+};
+
 export const AdminService = {
   approveDriver,
   suspendDriver,
   blockUser,
   unblockUser,
+  getAllUsers,
+  getAllDrivers,
+  getAllRides,
 };

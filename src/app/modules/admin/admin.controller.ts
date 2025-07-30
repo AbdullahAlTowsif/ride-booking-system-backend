@@ -57,9 +57,42 @@ const unblockUser = catchAsync(async (req: Request, res: Response, next: NextFun
   });
 });
 
+const getAllUsers = catchAsync(async (req: Request, res: Response) => {
+  const users = await AdminService.getAllUsers();
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Users fetched successfully",
+    data: users,
+  });
+});
+
+const getAllDrivers = catchAsync(async (req: Request, res: Response) => {
+  const drivers = await AdminService.getAllDrivers();
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Drivers fetched successfully",
+    data: drivers,
+  });
+});
+
+const getAllRides = catchAsync(async (req: Request, res: Response) => {
+  const rides = await AdminService.getAllRides();
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Rides fetched successfully",
+    data: rides,
+  });
+});
+
 export const AdminController = {
   approveDriver,
   suspendDriver,
   blockUser,
   unblockUser,
+  getAllUsers,
+  getAllDrivers,
+  getAllRides,
 };

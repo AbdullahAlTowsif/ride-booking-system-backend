@@ -10,4 +10,8 @@ router.patch("/driver/suspend/:id", checkAuth(Role.ADMIN), AdminController.suspe
 router.patch("/user/block/:id", checkAuth(Role.ADMIN), AdminController.blockUser);
 router.patch("/user/unblock/:id", checkAuth(Role.ADMIN), AdminController.unblockUser);
 
+router.get("/users", checkAuth(Role.ADMIN), AdminController.getAllUsers);
+router.get("/drivers", checkAuth(Role.ADMIN), AdminController.getAllDrivers);
+router.get("/rides", checkAuth(Role.ADMIN), AdminController.getAllRides);
+
 export const AdminRoutes = router;
