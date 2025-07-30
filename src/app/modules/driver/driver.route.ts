@@ -11,5 +11,6 @@ router.post("/apply-driver", checkAuth(Role.RIDER), DriverController.applyToBeDr
 router.get("/rides-available", checkAuth(Role.DRIVER), DriverController.getAvailableRides);
 router.patch("/rides/:id/accept", checkAuth(Role.DRIVER), DriverController.acceptRide);
 router.patch("/rides/:id/reject", checkAuth(Role.DRIVER), DriverController.rejectRide);
+router.patch("/rides/:id/status", checkAuth(Role.DRIVER), DriverController.updateRideStatus);
 
 export const DriverRoutes = router;

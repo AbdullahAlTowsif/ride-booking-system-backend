@@ -9,7 +9,10 @@ const applyToBeDriver = async (userId: string, payload: Partial<IDriver>) => {
   const isAlreadyDriver = await Driver.findOne({ user: userId });
 
   if (isAlreadyDriver) {
-    throw new AppError(httpStatus.BAD_REQUEST, "You have already applied or are already a driver.");
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "You have already applied or are already a driver."
+    );
   }
 
   const newDriver = await Driver.create({
@@ -26,12 +29,11 @@ const applyToBeDriver = async (userId: string, payload: Partial<IDriver>) => {
 const getAvailableRides = async () => {
   const availableRides = await Ride.find({
     driver: null,
-    status: RideStatus.REQUESTED
+    status: RideStatus.REQUESTED,
   }).sort({ createdAt: -1 });
 
   return availableRides;
 };
-
 
 const acceptRide = async (rideId: string, driverUserId: string) => {
   const driver = await Driver.findOne({ user: driverUserId });
@@ -47,11 +49,17 @@ const acceptRide = async (rideId: string, driverUserId: string) => {
   }
 
   if (ride.status !== RideStatus.REQUESTED) {
-    throw new AppError(httpStatus.BAD_REQUEST, "Ride is not available for acceptance");
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Ride is not available for acceptance"
+    );
   }
 
   if (ride.driver) {
-    throw new AppError(httpStatus.BAD_REQUEST, "Ride already assigned to a driver");
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Ride already assigned to a driver"
+    );
   }
 
   ride.driver = driver._id;
@@ -63,7 +71,6 @@ const acceptRide = async (rideId: string, driverUserId: string) => {
 
   return ride;
 };
-
 
 const rejectRide = async (rideId: string, driverUserId: string) => {
   const driver = await Driver.findOne({ user: driverUserId });
@@ -78,12 +85,21 @@ const rejectRide = async (rideId: string, driverUserId: string) => {
     throw new AppError(httpStatus.NOT_FOUND, "Ride not found");
   }
 
-  if (ride.status === RideStatus.REJECTED || ride.status === RideStatus.COMPLETED) {
+  if (
+    ride.status === RideStatus.REJECTED ||
+    ride.status === RideStatus.COMPLETED
+  ) {
     throw new AppError(httpStatus.BAD_REQUEST, `Ride cannot be rejected`);
   }
 
-  if (ride.driver?.toString() !== driver._id.toString() && ride.driver !== null) {
-    throw new AppError(httpStatus.FORBIDDEN, "You are not assigned to this ride");
+  if (
+    ride.driver?.toString() !== driver._id.toString() &&
+    ride.driver !== null
+  ) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You are not assigned to this ride"
+    );
   }
 
   ride.status = RideStatus.REJECTED;
@@ -96,10 +112,54 @@ const rejectRide = async (rideId: string, driverUserId: string) => {
   return ride;
 };
 
+const updateRideStatus = async (rideId: string, driverUserId: string) => {
+  const driver = await Driver.findOne({ user: driverUserId });
+  if (!driver) {
+    throw new AppError(httpStatus.NOT_FOUND, "Driver profile not found");
+  }
+
+  const ride = await Ride.findById(rideId);
+  if (!ride) {
+    throw new AppError(httpStatus.NOT_FOUND, "Ride not found");
+  }
+
+  if (!ride.driver || ride.driver.toString() !== driver._id.toString()) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You are not assigned to this ride"
+    );
+  }
+
+  let newStatus: typeof ride.status;
+
+  if (ride.status === RideStatus.ACCEPTED) {
+    newStatus = RideStatus.PICKED_UP;
+  } else if (ride.status === RideStatus.PICKED_UP) {
+    newStatus = RideStatus.IN_TRANSIT;
+  } else if (ride.status === RideStatus.IN_TRANSIT) {
+    newStatus = RideStatus.COMPLETED;
+  } else {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `Invalid ride status transition from "${ride.status}"`
+    );
+  }
+
+  ride.status = newStatus;
+  await ride.save();
+
+  if (newStatus === RideStatus.COMPLETED) {
+    driver.availabilityStatus = IsAvailable.ONLINE;
+    await driver.save();
+  }
+
+  return ride;
+};
 
 export const DriverService = {
   applyToBeDriver,
   getAvailableRides,
   acceptRide,
   rejectRide,
+  updateRideStatus,
 };
