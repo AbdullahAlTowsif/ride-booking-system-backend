@@ -7,7 +7,7 @@ import { createRideZodSchema } from "./ride.validation";
 
 const router = Router();
 
-router.post("/request", checkAuth(Role.RIDER), validateRequest(createRideZodSchema), RideController.createRide)
+router.post("/request", checkAuth(Role.RIDER, Role.ADMIN), validateRequest(createRideZodSchema), RideController.createRide)
 router.patch("/:id/cancel", checkAuth(Role.RIDER), RideController.cancelRide)
 router.get("/me", checkAuth(Role.RIDER), RideController.getMyRides)
 router.get("/:id", checkAuth(Role.RIDER), RideController.getSingleRide)

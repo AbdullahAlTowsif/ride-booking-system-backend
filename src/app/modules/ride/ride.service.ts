@@ -6,7 +6,7 @@ import { isValidObjectId } from 'mongoose';
 
 const createRide = async (
   riderId: string,
-  payload: Pick<IRide, 'pickupLocation' | 'destinationLocation'>
+  payload: Partial<IRide>
 ) => {
   if (!riderId) {
     throw new AppError(httpStatus.UNAUTHORIZED, 'Unauthorized access');

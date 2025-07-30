@@ -2,6 +2,8 @@ import { Driver } from "./driver.model";
 import { IDriver, IsApprove, IsAvailable } from "./driver.interface";
 import AppError from "../../errorHelpers/AppError";
 import httpStatus from "http-status-codes";
+import { Ride } from "../ride/ride.model";
+import { RideStatus } from "../ride/ride.interface";
 
 const applyToBeDriver = async (userId: string, payload: Partial<IDriver>) => {
   const isAlreadyDriver = await Driver.findOne({ user: userId });
@@ -21,7 +23,18 @@ const applyToBeDriver = async (userId: string, payload: Partial<IDriver>) => {
   return newDriver;
 };
 
+const getAvailableRides = async () => {
+  const availableRides = await Ride.find({
+    driver: null,
+    status: RideStatus.REQUESTED
+  }).sort({ createdAt: -1 });
+
+  return availableRides;
+};
+
+
 
 export const DriverService = {
   applyToBeDriver,
+  getAvailableRides,
 };

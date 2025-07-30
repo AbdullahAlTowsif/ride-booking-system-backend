@@ -8,5 +8,6 @@ import { createDriverZodSchema } from "./driver.validation";
 const router = Router();
 
 router.post("/apply-driver", checkAuth(Role.RIDER), DriverController.applyToBeDriver, validateRequest(createDriverZodSchema));
+router.get("/rides-available", checkAuth(Role.DRIVER), DriverController.getAvailableRides);
 
 export const DriverRoutes = router;

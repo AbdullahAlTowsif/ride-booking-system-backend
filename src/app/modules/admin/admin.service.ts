@@ -3,7 +3,7 @@ import AppError from "../../errorHelpers/AppError";
 import { Driver } from "../driver/driver.model";
 import { IsApprove } from "../driver/driver.interface";
 import { User } from "../user/user.model";
-import { IsBlock } from "../user/user.interface";
+import { IsBlock, Role } from "../user/user.interface";
 import { Ride } from "../ride/ride.model";
 
 const approveDriver = async (driverId: string) => {
@@ -19,6 +19,8 @@ const approveDriver = async (driverId: string) => {
 
   existingDriver.approvalStatus = IsApprove.APPROVED;
   await existingDriver.save();
+
+  await User.findByIdAndUpdate(existingDriver.user, { role: Role.DRIVER });
 
   return existingDriver;
 };

@@ -22,6 +22,18 @@ const applyToBeDriver = catchAsync(async (req: Request, res: Response, next: Nex
   });
 });
 
+const getAvailableRides = catchAsync(async (req: Request, res: Response) => {
+  const rides = await DriverService.getAvailableRides();
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Available ride requests retrieved successfully",
+    data: rides,
+  });
+});
+
+
 export const DriverController = {
   applyToBeDriver,
+  getAvailableRides,
 };
