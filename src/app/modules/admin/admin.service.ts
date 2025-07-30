@@ -20,6 +20,24 @@ const approveDriver = async (driverId: string) => {
   return existingDriver;
 };
 
+const suspendDriver = async (driverId: string) => {
+  const existingDriver = await Driver.findById(driverId);
+
+  if (!existingDriver) {
+    throw new AppError(httpStatus.NOT_FOUND, "Driver not found");
+  }
+
+  if (existingDriver.approvalStatus === IsApprove.SUSPENDED) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Driver is already suspended");
+  }
+
+  existingDriver.approvalStatus = IsApprove.SUSPENDED;
+  await existingDriver.save();
+
+  return existingDriver;
+};
+
 export const AdminService = {
   approveDriver,
+  suspendDriver
 };
