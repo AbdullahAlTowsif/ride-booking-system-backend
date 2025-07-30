@@ -34,7 +34,7 @@ const rideSchema = new Schema(
     },
     fare: {
       type: Number,
-      default: 0,
+      required: true,
     },
     timestamps: {
       requestedAt: { type: Date, default: Date.now },
@@ -50,7 +50,7 @@ const rideSchema = new Schema(
     },
   },
   {
-    timestamps: true, // creates createdAt and updatedAt
+    timestamps: true,
     versionKey: false
   }
 );

@@ -1,15 +1,12 @@
-import { IRide, RideStatus } from './ride.interface';
-import { Ride } from './ride.model';
-import AppError from '../../errorHelpers/AppError';
-import httpStatus from 'http-status-codes';
-import { isValidObjectId } from 'mongoose';
+import { IRide, RideStatus } from "./ride.interface";
+import { Ride } from "./ride.model";
+import AppError from "../../errorHelpers/AppError";
+import httpStatus from "http-status-codes";
+import { isValidObjectId } from "mongoose";
 
-const createRide = async (
-  riderId: string,
-  payload: Partial<IRide>
-) => {
+const createRide = async (riderId: string, payload: Partial<IRide>) => {
   if (!riderId) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'Unauthorized access');
+    throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized access");
   }
 
   const existingRide = await Ride.findOne({
@@ -27,7 +24,7 @@ const createRide = async (
   if (existingRide) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      'You already have an active ride in progress'
+      "You already have an active ride in progress"
     );
   }
 
@@ -36,7 +33,7 @@ const createRide = async (
     pickupLocation: payload.pickupLocation,
     destinationLocation: payload.destinationLocation,
     status: RideStatus.REQUESTED,
-    fare: 0,
+    fare: payload.fare,
     isPaid: false,
     timestamps: {
       requestedAt: new Date(),
@@ -46,20 +43,22 @@ const createRide = async (
   return ride;
 };
 
-
 const cancelRide = async (rideId: string, riderId: string) => {
   if (!isValidObjectId(rideId)) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Invalid ride ID');
+    throw new AppError(httpStatus.BAD_REQUEST, "Invalid ride ID");
   }
 
   const ride = await Ride.findById(rideId);
 
   if (!ride) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Ride not found');
+    throw new AppError(httpStatus.NOT_FOUND, "Ride not found");
   }
 
   if (ride.rider.toString() !== riderId) {
-    throw new AppError(httpStatus.FORBIDDEN, 'You are not authorized to cancel this ride');
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You are not authorized to cancel this ride"
+    );
   }
 
   if (
@@ -80,28 +79,28 @@ const cancelRide = async (rideId: string, riderId: string) => {
   return ride;
 };
 
-
 const getMyRides = async (riderId: string) => {
-  const rides = await Ride.find({ rider: riderId })
-    .sort({ createdAt: -1 })
+  const rides = await Ride.find({ rider: riderId }).sort({ createdAt: -1 });
 
   return rides;
 };
 
-
 const getSingleRide = async (rideId: string, riderId: string) => {
   if (!isValidObjectId(rideId)) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Invalid ride ID');
+    throw new AppError(httpStatus.BAD_REQUEST, "Invalid ride ID");
   }
 
-  const ride = await Ride.findById(rideId)
+  const ride = await Ride.findById(rideId);
 
   if (!ride) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Ride not found');
+    throw new AppError(httpStatus.NOT_FOUND, "Ride not found");
   }
 
   if (ride.rider.toString() !== riderId) {
-    throw new AppError(httpStatus.FORBIDDEN, 'You are not authorized to view this ride');
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You are not authorized to view this ride"
+    );
   }
 
   return ride;

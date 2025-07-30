@@ -15,4 +15,9 @@ export const createRideZodSchema = z.object({
       lng: z.number({ message: "Destination longitude is required" }),
     }),
   }),
+  fare: z.number({
+    message: "Fare is Required"
+  })
+  .positive("Fare must be a positive number")
+  .min(10, "Fare must be at least 10 taka")
 });
