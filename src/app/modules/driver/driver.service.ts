@@ -65,8 +65,41 @@ const acceptRide = async (rideId: string, driverUserId: string) => {
 };
 
 
+const rejectRide = async (rideId: string, driverUserId: string) => {
+  const driver = await Driver.findOne({ user: driverUserId });
+
+  if (!driver) {
+    throw new AppError(httpStatus.FORBIDDEN, "Driver profile not found");
+  }
+
+  const ride = await Ride.findById(rideId);
+
+  if (!ride) {
+    throw new AppError(httpStatus.NOT_FOUND, "Ride not found");
+  }
+
+  if (ride.status === RideStatus.REJECTED || ride.status === RideStatus.COMPLETED) {
+    throw new AppError(httpStatus.BAD_REQUEST, `Ride cannot be rejected`);
+  }
+
+  if (ride.driver?.toString() !== driver._id.toString() && ride.driver !== null) {
+    throw new AppError(httpStatus.FORBIDDEN, "You are not assigned to this ride");
+  }
+
+  ride.status = RideStatus.REJECTED;
+  ride.driver = null;
+  await ride.save();
+
+  driver.availabilityStatus = IsAvailable.ONLINE;
+  await driver.save();
+
+  return ride;
+};
+
+
 export const DriverService = {
   applyToBeDriver,
   getAvailableRides,
   acceptRide,
+  rejectRide,
 };

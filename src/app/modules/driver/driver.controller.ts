@@ -50,9 +50,26 @@ const acceptRide = catchAsync(async (req: Request, res: Response) => {
 });
 
 
+export const rejectRide = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const user = req.user;
+
+  const {userId} = user as JwtPayload;
+
+  const result = await DriverService.rejectRide(id, userId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Ride request rejected successfully",
+    data: result,
+  });
+});
+
 
 export const DriverController = {
   applyToBeDriver,
   getAvailableRides,
   acceptRide,
+  rejectRide,
 };
