@@ -5,6 +5,7 @@ import httpStatus from "http-status-codes";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { AdminService } from "./admin.service";
+import { JwtPayload } from "jsonwebtoken";
 
 const approveDriver = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const driverId = req.params.id;
@@ -30,7 +31,35 @@ const suspendDriver = catchAsync(async (req: Request, res: Response, next: NextF
   });
 });
 
+const blockUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const userId = req.params.id;
+
+  const result = await AdminService.blockUser(userId);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "User Blocked successfully!",
+    data: result,
+  });
+});
+
+const unblockUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const userId = req.params.id;
+
+  const result = await AdminService.unblockUser(userId);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "User Unblocked successfully!",
+    data: result,
+  });
+});
+
 export const AdminController = {
   approveDriver,
-  suspendDriver
+  suspendDriver,
+  blockUser,
+  unblockUser,
 };

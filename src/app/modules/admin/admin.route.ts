@@ -7,5 +7,7 @@ const router = Router();
 
 router.patch("/driver/approve/:id", checkAuth(Role.ADMIN), AdminController.approveDriver);
 router.patch("/driver/suspend/:id", checkAuth(Role.ADMIN), AdminController.suspendDriver);
+router.patch("/user/block/:id", checkAuth(Role.ADMIN), AdminController.blockUser);
+router.patch("/user/unblock/:id", checkAuth(Role.ADMIN), AdminController.unblockUser);
 
 export const AdminRoutes = router;

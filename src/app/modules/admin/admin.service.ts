@@ -2,6 +2,8 @@ import httpStatus from "http-status-codes";
 import AppError from "../../errorHelpers/AppError";
 import { Driver } from "../driver/driver.model";
 import { IsApprove } from "../driver/driver.interface";
+import { User } from "../user/user.model";
+import { IsBlock } from "../user/user.interface";
 
 const approveDriver = async (driverId: string) => {
   const existingDriver = await Driver.findById(driverId);
@@ -37,7 +39,43 @@ const suspendDriver = async (driverId: string) => {
   return existingDriver;
 };
 
+const blockUser = async (userId: string) => {
+  const existingUser = await User.findById(userId);
+
+  if (!existingUser) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  if (existingUser.isBlock === IsBlock.BLOCK) {
+    throw new AppError(httpStatus.BAD_REQUEST, "User is already blocked");
+  }
+
+  existingUser.isBlock = IsBlock.BLOCK;
+  await existingUser.save();
+
+  return existingUser;
+};
+
+const unblockUser = async (userId: string) => {
+  const existingUser = await User.findById(userId);
+
+  if (!existingUser) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  if (existingUser.isBlock === IsBlock.UNBLOCK) {
+    throw new AppError(httpStatus.BAD_REQUEST, "User is already unblocked");
+  }
+
+  existingUser.isBlock = IsBlock.UNBLOCK;
+  await existingUser.save();
+
+  return existingUser;
+};
+
 export const AdminService = {
   approveDriver,
-  suspendDriver
+  suspendDriver,
+  blockUser,
+  unblockUser,
 };
