@@ -10,7 +10,7 @@ import { envVars } from "./env";
 import { User } from "../modules/user/user.model";
 import { Strategy as LocalStrategy } from "passport-local";
 import bcryptjs from "bcryptjs";
-import { IsApprove, Role } from "../modules/user/user.interface";
+import { IsBlock, Role } from "../modules/user/user.interface";
 
 passport.use(
   new LocalStrategy(
@@ -31,11 +31,10 @@ passport.use(
         }
 
         if (
-          isUserExist.isApprove === IsApprove.BLOCKED ||
-          isUserExist.isApprove === IsApprove.SUSPENDED
+          isUserExist.isBlock === IsBlock.BLOCK
         ) {
 
-          return done(`User is ${isUserExist.isApprove}`);
+          return done(`User is Blocked`);
         }
 
         if (isUserExist.isDeleted) {
@@ -98,9 +97,9 @@ passport.use(
 
         if (
           isUserExist &&
-          (isUserExist.isApprove === IsApprove.BLOCKED || isUserExist.isApprove === IsApprove.SUSPENDED)
+          (isUserExist.isBlock === IsBlock.BLOCK)
         ) {
-          done(`User is ${isUserExist.isApprove}`);
+          done(`User is Blocked`);
         }
 
         if (isUserExist && isUserExist.isDeleted) {

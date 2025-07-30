@@ -1,0 +1,27 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
+import { Request, Response, NextFunction } from "express";
+import { catchAsync } from "../../utils/catchAsync";
+import { DriverService } from "./driver.service";
+import { sendResponse } from "../../utils/sendResponse";
+import httpStatus from "http-status-codes";
+import { JwtPayload } from "jsonwebtoken";
+
+const applyToBeDriver = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const user = req.user;
+
+  const {userId} = user as JwtPayload;
+
+  const driver = await DriverService.applyToBeDriver(userId, req.body);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.CREATED,
+    message: "Driver application submitted successfully.",
+    data: driver,
+  });
+});
+
+export const DriverController = {
+  applyToBeDriver,
+};

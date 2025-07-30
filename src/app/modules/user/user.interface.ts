@@ -11,10 +11,9 @@ export interface IAuthProvider {
     providerId: string
 }
 
-export enum IsApprove {
-    APPROVED = "APPROVED",
-    SUSPENDED = "SUSPENDED",
-    BLOCKED = "BLOCKED"
+export enum IsBlock {
+    BLOCK = "BLOCK",
+    UNBLOCK = "UNBLOCK"
 }
 
 export interface IUser {
@@ -26,7 +25,7 @@ export interface IUser {
     picture?: string;
     address?: string;
     isDeleted?: string;
-    isApprove?: IsApprove;
+    isBlock?: string;
     isVerified?: boolean;
     role: Role;
     auths: IAuthProvider[];

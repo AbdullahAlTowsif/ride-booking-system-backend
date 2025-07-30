@@ -5,7 +5,7 @@ import { verifyToken } from "../utils/jwt";
 import { envVars } from "../config/env";
 import { User } from "../modules/user/user.model";
 import httpStatus from "http-status-codes";
-import { IsApprove } from "../modules/user/user.interface";
+import { IsBlock } from "../modules/user/user.interface";
 
 export const checkAuth =
   (...authRoles: string[]) =>
@@ -32,12 +32,11 @@ export const checkAuth =
       }
 
       if (
-        isUserExist.isApprove === IsApprove.BLOCKED ||
-        isUserExist.isApprove === IsApprove.SUSPENDED
+        isUserExist.isBlock === IsBlock.BLOCK
       ) {
         throw new AppError(
           httpStatus.BAD_REQUEST,
-          `User is ${isUserExist.isApprove}`
+          `User is Blocked`
         );
       }
 
