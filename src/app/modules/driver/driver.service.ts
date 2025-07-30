@@ -64,6 +64,7 @@ const acceptRide = async (rideId: string, driverUserId: string) => {
 
   ride.driver = driver._id;
   ride.status = RideStatus.ACCEPTED;
+  ride.timestamps.acceptedAt = new Date();
   await ride.save();
 
   driver.availabilityStatus = IsAvailable.OFFLINE;
@@ -134,10 +135,13 @@ const updateRideStatus = async (rideId: string, driverUserId: string) => {
 
   if (ride.status === RideStatus.ACCEPTED) {
     newStatus = RideStatus.PICKED_UP;
+    ride.timestamps.pickedUpAt = new Date();
   } else if (ride.status === RideStatus.PICKED_UP) {
     newStatus = RideStatus.IN_TRANSIT;
+    ride.timestamps.inTransitAt = new Date();
   } else if (ride.status === RideStatus.IN_TRANSIT) {
     newStatus = RideStatus.COMPLETED;
+    ride.timestamps.completedAt = new Date();
   } else {
     throw new AppError(
       httpStatus.BAD_REQUEST,
