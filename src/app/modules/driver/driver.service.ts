@@ -17,7 +17,7 @@ const applyToBeDriver = async (userId: string, payload: Partial<IDriver>) => {
     vehicleType: payload.vehicleType,
     vehicleNumber: payload.vehicleNumber,
     approvalStatus: IsApprove.PENDING,
-    availabilityStatus: IsAvailable.OFFLINE,
+    availabilityStatus: IsAvailable.ONLINE,
   });
 
   return newDriver;
@@ -33,8 +33,40 @@ const getAvailableRides = async () => {
 };
 
 
+const acceptRide = async (rideId: string, driverUserId: string) => {
+  const driver = await Driver.findOne({ user: driverUserId });
+
+  if (!driver) {
+    throw new AppError(httpStatus.FORBIDDEN, "Driver profile not found");
+  }
+
+  const ride = await Ride.findById(rideId);
+
+  if (!ride) {
+    throw new AppError(httpStatus.NOT_FOUND, "Ride not found");
+  }
+
+  if (ride.status !== RideStatus.REQUESTED) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Ride is not available for acceptance");
+  }
+
+  if (ride.driver) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Ride already assigned to a driver");
+  }
+
+  ride.driver = driver._id;
+  ride.status = RideStatus.ACCEPTED;
+  await ride.save();
+
+  driver.availabilityStatus = IsAvailable.OFFLINE;
+  await driver.save();
+
+  return ride;
+};
+
 
 export const DriverService = {
   applyToBeDriver,
   getAvailableRides,
+  acceptRide,
 };

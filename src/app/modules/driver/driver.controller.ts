@@ -33,7 +33,26 @@ const getAvailableRides = catchAsync(async (req: Request, res: Response) => {
 });
 
 
+const acceptRide = catchAsync(async (req: Request, res: Response) => {
+  const rideId = req.params.id;
+  const user = req.user;
+
+  const {userId} = user as JwtPayload;
+
+  const result = await DriverService.acceptRide(rideId, userId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Ride accepted successfully",
+    data: result,
+  });
+});
+
+
+
 export const DriverController = {
   applyToBeDriver,
   getAvailableRides,
+  acceptRide,
 };
