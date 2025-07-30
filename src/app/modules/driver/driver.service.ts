@@ -141,7 +141,7 @@ const updateRideStatus = async (rideId: string, driverUserId: string) => {
   } else {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      `Invalid ride status transition from "${ride.status}"`
+      `Invalid ride status transition from ${ride.status}`
     );
   }
 
