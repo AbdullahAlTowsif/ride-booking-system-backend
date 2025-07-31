@@ -1,4 +1,5 @@
 import z from "zod";
+import { IsBlock, Role } from "./user.interface";
 
 export const createUserZodSchema = z.object({
   name: z
@@ -34,3 +35,33 @@ export const createUserZodSchema = z.object({
     .max(200, { message: "Address cannot exceed 200 characters." })
     .optional(),
 });
+
+
+export const updateUserZodSchema = z.object({
+    name: z
+        .string({ message: "Name must be string" })
+        .min(2, { message: "Name must be at least 2 characters long." })
+        .max(50, { message: "Name cannot exceed 50 characters." }).optional(),
+    phone: z
+        .string({ message: "Phone Number must be string" })
+        .regex(/^(?:\+8801\d{9}|01\d{9})$/, {
+            message: "Phone number must be valid for Bangladesh. Format: +8801XXXXXXXXX or 01XXXXXXXXX",
+        })
+        .optional(),
+    role: z
+        .enum(Object.values(Role) as [string])
+        .optional(),
+    IsBlock: z
+        .enum(Object.values(IsBlock) as [string])
+        .optional(),
+    isDeleted: z
+        .boolean({ message: "isDeleted must be true or false" })
+        .optional(),
+    isVerified: z
+        .boolean({ message: "isVerified must be true or false" })
+        .optional(),
+    address: z
+        .string({ message: "Address must be string" })
+        .max(200, { message: "Address cannot exceed 200 characters." })
+        .optional()
+})
