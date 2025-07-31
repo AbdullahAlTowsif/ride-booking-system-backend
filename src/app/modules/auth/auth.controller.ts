@@ -11,6 +11,7 @@ import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status-codes";
 import { AuthService } from "./auth.service";
 import { envVars } from "../../config/env";
+import { JwtPayload } from "jsonwebtoken";
 
 const credentialsLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     passport.authenticate("local", async(error: any, user: any, info: any) => {
@@ -86,6 +87,22 @@ const getNewAccessToken = catchAsync(
   }
 );
 
+const setPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user as JwtPayload;
+    const { password } = req.body;
+
+    await AuthService.setPassword( decodedToken.userId, password );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Password changed Successfully",
+      data: null,
+    });
+  }
+);
+
 const googleCallbackController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
     let redirectTo = req.query.state ? req.query.state as string : ""
@@ -111,5 +128,6 @@ export const AuthController = {
     credentialsLogin,
     getNewAccessToken,
     googleCallbackController,
-    logout
+    logout,
+    setPassword,
 };
