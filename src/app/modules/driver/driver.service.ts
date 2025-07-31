@@ -42,6 +42,10 @@ const acceptRide = async (rideId: string, driverUserId: string) => {
     throw new AppError(httpStatus.FORBIDDEN, "Driver profile not found");
   }
 
+  if(driver.approvalStatus === IsApprove.SUSPENDED) {
+    throw new AppError(httpStatus.BAD_REQUEST, "You are a SUSPENDED Driver. You cann't accept Request");
+  }
+
   const ride = await Ride.findById(rideId);
 
   if (!ride) {
