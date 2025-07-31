@@ -1,6 +1,6 @@
 import { JwtPayload } from "jsonwebtoken";
 import { envVars } from "../config/env";
-import { IsApprove, IUser } from "../modules/user/user.interface";
+import { IsBlock, IUser } from "../modules/user/user.interface";
 import { generateToken, verifyToken } from "./jwt";
 import { User } from "../modules/user/user.model";
 import AppError from "../errorHelpers/AppError";
@@ -46,12 +46,11 @@ export const createNewAccessTokenWithRefreshToken = async (
   }
 
   if (
-    isUserExist.isApprove === IsApprove.BLOCKED ||
-    isUserExist.isApprove === IsApprove.SUSPENDED
+    isUserExist.isBlock === IsBlock.BLOCK
   ) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      `User is ${isUserExist.isApprove}`
+      `User is ${isUserExist.isBlock}`
     );
   }
 
