@@ -142,6 +142,7 @@ const updateRideStatus = async (rideId: string, driverUserId: string) => {
   } else if (ride.status === RideStatus.IN_TRANSIT) {
     newStatus = RideStatus.COMPLETED;
     ride.timestamps.completedAt = new Date();
+    driver.earnings += ride.fare
   } else {
     throw new AppError(
       httpStatus.BAD_REQUEST,
