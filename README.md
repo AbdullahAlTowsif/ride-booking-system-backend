@@ -68,7 +68,7 @@ The Ride Booking API supports the following features:
 
 ---
 
-## 📫 API Endpoints Summary
+## 📫 API Endpoints Summary (starts with `/api`)
 
 ### 🔐 Auth
 | Method | Endpoint | Description |
