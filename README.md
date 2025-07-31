@@ -97,6 +97,7 @@ The Ride Booking API supports the following features:
 | `PATCH` | `/admin/driver/suspend/:id` | Suspend driver application |
 | `PATCH` | `/admin/user/block/:id` | Block user |
 | `PATCH` | `/admin/user/unblock/:id` | Unblock user |
+| `GET` | `/admin/report` | Generate Report |
 
 ---
 

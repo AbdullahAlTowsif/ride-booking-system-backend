@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from "express";
 import httpStatus from "http-status-codes";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
-import { AdminService } from "./admin.service";
+import { AdminService, generateAdminReport } from "./admin.service";
 import { JwtPayload } from "jsonwebtoken";
 
 const approveDriver = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -87,6 +87,18 @@ const getAllRides = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+
+export const getAdminReport = catchAsync(async (req: Request, res: Response) => {
+  const report = await generateAdminReport();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Admin report generated successfully",
+    data: report,
+  });
+});
+
 export const AdminController = {
   approveDriver,
   suspendDriver,
@@ -95,4 +107,5 @@ export const AdminController = {
   getAllUsers,
   getAllDrivers,
   getAllRides,
+  getAdminReport,
 };

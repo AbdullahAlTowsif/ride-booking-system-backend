@@ -5,6 +5,8 @@ import { IsApprove } from "../driver/driver.interface";
 import { User } from "../user/user.model";
 import { IsBlock, Role } from "../user/user.interface";
 import { Ride } from "../ride/ride.model";
+import { IAdminReport } from "./admin.interface";
+import { RideStatus } from "../ride/ride.interface";
 
 const approveDriver = async (driverId: string) => {
   const existingDriver = await Driver.findById(driverId);
@@ -85,9 +87,39 @@ const getAllDrivers = async () => {
 };
 
 const getAllRides = async () => {
-  return await Ride.find()
-    .populate("rider", "-password")
-    .populate("driver");
+  return await Ride.find().populate("rider", "-password").populate("driver");
+};
+
+export const generateAdminReport = async (): Promise<IAdminReport> => {
+  const [
+    totalUsers,
+    totalDrivers,
+    totalRides,
+    completedRides,
+    ongoingRides,
+    earningsData,
+  ] = await Promise.all([
+    User.countDocuments(),
+    Driver.countDocuments(),
+    Ride.countDocuments(),
+    Ride.countDocuments({ status: RideStatus.COMPLETED }),
+    Ride.countDocuments({
+      status: { $in: [RideStatus.PICKED_UP, RideStatus.IN_TRANSIT] },
+    }),
+    Ride.aggregate([
+      { $match: { status: RideStatus.COMPLETED } },
+      { $group: { _id: null, total: { $sum: "$fare" } } },
+    ]),
+  ]);
+
+  return {
+    totalUsers,
+    totalDrivers,
+    totalRides,
+    completedRides,
+    ongoingRides,
+    totalEarnings: earningsData[0]?.total || 0,
+  };
 };
 
 export const AdminService = {
@@ -98,4 +130,5 @@ export const AdminService = {
   getAllUsers,
   getAllDrivers,
   getAllRides,
+  generateAdminReport,
 };

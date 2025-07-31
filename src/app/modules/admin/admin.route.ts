@@ -14,4 +14,6 @@ router.get("/users", checkAuth(Role.ADMIN), AdminController.getAllUsers);
 router.get("/drivers", checkAuth(Role.ADMIN), AdminController.getAllDrivers);
 router.get("/rides", checkAuth(Role.ADMIN), AdminController.getAllRides);
 
+router.get("/report", checkAuth(Role.ADMIN), AdminController.getAdminReport);
+
 export const AdminRoutes = router;
