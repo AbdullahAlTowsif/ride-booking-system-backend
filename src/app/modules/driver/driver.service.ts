@@ -142,7 +142,8 @@ const updateRideStatus = async (rideId: string, driverUserId: string) => {
   } else if (ride.status === RideStatus.IN_TRANSIT) {
     newStatus = RideStatus.COMPLETED;
     ride.timestamps.completedAt = new Date();
-    driver.earnings += ride.fare
+    driver.earnings += ride.fare;
+    ride.isPaid = true;
   } else {
     throw new AppError(
       httpStatus.BAD_REQUEST,
@@ -161,10 +162,31 @@ const updateRideStatus = async (rideId: string, driverUserId: string) => {
   return ride;
 };
 
+
+const getRideHistory = async (userId: string) => {
+  const driver = await Driver.findOne({ user: userId });
+
+  if (!driver) {
+    throw new AppError(httpStatus.NOT_FOUND, "Driver not found");
+  }
+
+  const rides = await Ride.find({ driver: driver._id }).sort({ createdAt: -1 });
+
+  const totalEarnings = driver.earnings;
+
+  return {
+    totalRides: rides.length,
+    totalEarnings,
+    rides,
+  };
+};
+
+
 export const DriverService = {
   applyToBeDriver,
   getAvailableRides,
   acceptRide,
   rejectRide,
   updateRideStatus,
+  getRideHistory,
 };
