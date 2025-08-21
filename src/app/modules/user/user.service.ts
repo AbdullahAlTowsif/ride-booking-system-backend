@@ -62,7 +62,16 @@ const updateUser = async (userId: string, payload: Partial<IUser>, decodedToken:
     return newUpdatedUser
 }
 
+// changed while doing frontend
+const getMe = async (userId: string) => {
+    const user = await User.findById(userId).select("-password");
+    return {
+        data: user
+    }
+};
+
 export const UserService = {
     createUser,
-    updateUser
+    updateUser,
+    getMe,
 }

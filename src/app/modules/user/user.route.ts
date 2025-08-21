@@ -9,5 +9,7 @@ const router = Router();
 
 router.post("/register", validateRequest(createUserZodSchema), UserControllers.createUser);
 router.patch("/:id", validateRequest(updateUserZodSchema), checkAuth(...Object.values(Role)), UserControllers.updateUser);
+// changed while doing frontend
+router.get("/me", checkAuth(...Object.values(Role)), UserControllers.getMe);
 
 export const UserRoutes = router;

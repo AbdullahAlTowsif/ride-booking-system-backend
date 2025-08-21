@@ -11,7 +11,8 @@ export const checkAuth =
   (...authRoles: string[]) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const accessToken = req.headers.authorization;
+      // changed while doing forntend
+      const accessToken = req.headers.authorization || req.cookies.accessToken;
 
       if (!accessToken) {
         throw new AppError(403, "No Token Recieved");
@@ -31,13 +32,8 @@ export const checkAuth =
         throw new AppError(httpStatus.BAD_REQUEST, "User is not Verified");
       }
 
-      if (
-        isUserExist.isBlock === IsBlock.BLOCK
-      ) {
-        throw new AppError(
-          httpStatus.BAD_REQUEST,
-          `User is Blocked`
-        );
+      if (isUserExist.isBlock === IsBlock.BLOCK) {
+        throw new AppError(httpStatus.BAD_REQUEST, `User is Blocked`);
       }
 
       if (isUserExist.isDeleted) {

@@ -13,7 +13,7 @@ export const handleZodError = (error: any): TGenericResponse => {
 
   return {
     statusCode: 400,
-    message: "Zode Error",
+    message: "Zod Error",
     errorSources,
   };
 };

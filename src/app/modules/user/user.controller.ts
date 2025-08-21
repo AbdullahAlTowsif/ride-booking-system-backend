@@ -5,9 +5,15 @@ import { UserService } from "./user.service";
 import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status-codes";
 import { JwtPayload } from "jsonwebtoken";
+import { createUserTokens } from "../../utils/userTokens";
+import { setAuthCookie } from "../../utils/setCookie";
 
 const createUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const user = await UserService.createUser(req.body)
+
+    // changed while doing frontend: now register users are counted as logged in user
+    const userTokens = await createUserTokens(user);
+    setAuthCookie(res, userTokens);
 
     sendResponse(res, {
         success: true,
@@ -34,7 +40,21 @@ const updateUser = catchAsync(async (req: Request, res: Response, next: NextFunc
     })
 })
 
+
+const getMe = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user as JwtPayload
+    const result = await UserService.getMe(decodedToken.userId);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "Your Profile Retrieved Successfully",
+        data: result.data
+    })
+})
+
 export const UserControllers = {
     createUser,
     updateUser,
+    getMe,
 }
