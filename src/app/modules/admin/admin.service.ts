@@ -7,6 +7,8 @@ import { IsBlock, Role } from "../user/user.interface";
 import { Ride } from "../ride/ride.model";
 import { IAdminReport } from "./admin.interface";
 import { RideStatus } from "../ride/ride.interface";
+import { QueryBuilder } from "../../utils/QueryBuilder";
+import { userSearchableFields } from "./admin.constant";
 
 const approveDriver = async (driverId: string) => {
   const existingDriver = await Driver.findById(driverId);
@@ -78,8 +80,19 @@ const unblockUser = async (userId: string) => {
   return existingUser;
 };
 
-const getAllUsers = async () => {
-  return await User.find().select("-password");
+const getAllUsers = async (query: Record<string, string>) => {
+  // return await User.find().select("-password");
+  const queryBuilder = new QueryBuilder(User.find(), query)
+  const users = await queryBuilder.search(userSearchableFields).filter().sort().fields().paginate()
+
+  const [data, meta] = await Promise.all([
+    users.build(),
+    queryBuilder.getMeta()
+  ])
+
+  return {
+    data, meta
+  }
 };
 
 const getAllDrivers = async () => {

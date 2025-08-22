@@ -58,14 +58,25 @@ const unblockUser = catchAsync(async (req: Request, res: Response, next: NextFun
 });
 
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
-  const users = await AdminService.getAllUsers();
+  const query = req.query;
+  const result = await AdminService.getAllUsers(query as Record<string, string>);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "Users fetched successfully",
-    data: users,
+    data: result.data,
+    meta: result.meta
   });
 });
+// const getAllUsers = catchAsync(async (req: Request, res: Response) => {
+//   const users = await AdminService.getAllUsers();
+//   sendResponse(res, {
+//     success: true,
+//     statusCode: httpStatus.OK,
+//     message: "Users fetched successfully",
+//     data: users,
+//   });
+// });
 
 const getAllDrivers = catchAsync(async (req: Request, res: Response) => {
   const drivers = await AdminService.getAllDrivers();
