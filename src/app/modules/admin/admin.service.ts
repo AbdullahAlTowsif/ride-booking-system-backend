@@ -8,7 +8,7 @@ import { Ride } from "../ride/ride.model";
 import { IAdminReport } from "./admin.interface";
 import { RideStatus } from "../ride/ride.interface";
 import { QueryBuilder } from "../../utils/QueryBuilder";
-import { userSearchableFields } from "./admin.constant";
+import { ridesSearchableFields, userSearchableFields } from "./admin.constant";
 
 const approveDriver = async (driverId: string) => {
   const existingDriver = await Driver.findById(driverId);
@@ -99,9 +99,23 @@ const getAllDrivers = async () => {
   return await Driver.find().populate("user", "-password");
 };
 
-const getAllRides = async () => {
-  return await Ride.find().populate("rider", "-password").populate("driver");
+const getAllRides = async (query: Record<string, string>) => {
+  const queryBuilder = new QueryBuilder(Ride.find(), query)
+  const rides = await queryBuilder.search(ridesSearchableFields).filter().sort().fields().paginate()
+
+  const [data, meta] = await Promise.all([
+    rides.build(),
+    queryBuilder.getMeta()
+  ])
+
+  return {
+    data, meta
+  }
 };
+
+// const getAllRides = async () => {
+//   return await Ride.find().populate("rider", "-password").populate("driver")
+// };
 
 export const generateAdminReport = async (): Promise<IAdminReport> => {
   const [

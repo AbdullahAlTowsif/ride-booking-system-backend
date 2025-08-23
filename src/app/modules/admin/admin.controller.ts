@@ -89,14 +89,26 @@ const getAllDrivers = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllRides = catchAsync(async (req: Request, res: Response) => {
-  const rides = await AdminService.getAllRides();
+  const query = req.query;
+  const result = await AdminService.getAllRides(query as Record<string, string>);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: "Rides fetched successfully",
-    data: rides,
+    message: "All Rides fetched successfully",
+    data: result.data,
+    meta: result.meta
   });
 });
+
+// const getAllRides = catchAsync(async (req: Request, res: Response) => {
+//   const rides = await AdminService.getAllRides();
+//   sendResponse(res, {
+//     success: true,
+//     statusCode: httpStatus.OK,
+//     message: "Rides fetched successfully",
+//     data: rides,
+//   });
+// });
 
 
 export const getAdminReport = catchAsync(async (req: Request, res: Response) => {
