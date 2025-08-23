@@ -13,6 +13,12 @@ router.post("/logout", AuthController.logout);
 
 router.post("/set-password", checkAuth(...Object.values(Role)), AuthController.setPassword);
 
+router.post(
+  "/change-password",
+  checkAuth(...Object.values(Role)),
+  AuthController.changePassword
+);
+
 router.get("/google", async(req: Request, res: Response, next: NextFunction) => {
     const redirect = req.query.redirect || "/";
     passport.authenticate("google", {
