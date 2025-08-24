@@ -6,6 +6,8 @@ import { DriverService } from "./driver.service";
 import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status-codes";
 import { JwtPayload } from "jsonwebtoken";
+import AppError from "../../errorHelpers/AppError";
+import { IsAvailable } from "./driver.interface";
 
 const applyToBeDriver = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const user = req.user;
@@ -32,6 +34,36 @@ const getAvailableRides = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+
+const updateAvailability = catchAsync(async (req: Request, res: Response) => {
+  const user = req.user;
+  const { userId } = user as JwtPayload;
+  const { availabilityStatus } = req.body;
+
+  const driver = await DriverService.updateAvailability(userId, availabilityStatus);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Driver availability updated successfully",
+    data: driver,
+  });
+});
+
+
+const getMeDriver = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user as JwtPayload;
+    // console.log(decodedToken);
+    const result = await DriverService.getMeDriver(decodedToken.userId);
+    // console.log(result);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "Your Profile Retrieved Successfully",
+        data: result.data
+    })
+})
 
 const acceptRide = catchAsync(async (req: Request, res: Response) => {
   const rideId = req.params.id;
@@ -108,4 +140,6 @@ export const DriverController = {
   rejectRide,
   updateRideStatus,
   getRideHistory,
+  updateAvailability,
+  getMeDriver,
 };

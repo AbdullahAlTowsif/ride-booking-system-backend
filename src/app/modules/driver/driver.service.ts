@@ -42,8 +42,11 @@ const acceptRide = async (rideId: string, driverUserId: string) => {
     throw new AppError(httpStatus.FORBIDDEN, "Driver profile not found");
   }
 
-  if(driver.approvalStatus === IsApprove.SUSPENDED) {
-    throw new AppError(httpStatus.BAD_REQUEST, "You are a SUSPENDED Driver. You cann't accept Request");
+  if (driver.approvalStatus === IsApprove.SUSPENDED) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "You are a SUSPENDED Driver. You cann't accept Request"
+    );
   }
 
   const ride = await Ride.findById(rideId);
@@ -166,6 +169,37 @@ const updateRideStatus = async (rideId: string, driverUserId: string) => {
   return ride;
 };
 
+const updateAvailability = async (userId: string, status: IsAvailable) => {
+  const driver = await Driver.findOne({ user: userId });
+
+  if (!driver) {
+    throw new AppError(httpStatus.NOT_FOUND, "Driver profile not found");
+  }
+
+  if (
+    driver.approvalStatus === IsApprove.SUSPENDED ||
+    driver.approvalStatus === IsApprove.BLOCKED ||
+    driver.approvalStatus === IsApprove.PENDING
+  ) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `You're ${driver.approvalStatus} Driver. You're not allowed to do this.`
+    );
+  }
+
+  driver.availabilityStatus = status;
+  await driver.save();
+
+  return driver;
+};
+
+const getMeDriver = async (userId: string) => {
+  // console.log(userId);
+  const driver = await Driver.findOne({ user: userId });
+  return {
+    data: driver,
+  };
+};
 
 const getRideHistory = async (userId: string) => {
   const driver = await Driver.findOne({ user: userId });
@@ -185,7 +219,6 @@ const getRideHistory = async (userId: string) => {
   };
 };
 
-
 export const DriverService = {
   applyToBeDriver,
   getAvailableRides,
@@ -193,4 +226,6 @@ export const DriverService = {
   rejectRide,
   updateRideStatus,
   getRideHistory,
+  updateAvailability,
+  getMeDriver,
 };
