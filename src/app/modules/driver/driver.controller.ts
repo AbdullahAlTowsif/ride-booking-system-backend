@@ -34,6 +34,30 @@ const getAvailableRides = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getMyRides = catchAsync(async (req: Request, res: Response) => {
+  const decodedToken = req.user as JwtPayload;
+  // console.log("decodedToken", decodedToken);
+  const userDriver = await DriverService.getMeDriver(decodedToken.userId);
+  // console.log("userDriver", userDriver);
+  // console.log(userDriver.data?._id);
+  const driverObjectId = userDriver?.data?._id;
+  const driverId = driverObjectId?.toString();
+  // console.log(driverId);
+
+  if(!driverId) {
+    throw new AppError(httpStatus.NOT_FOUND, "No Driver Id Found");
+  }
+  const rides = await DriverService.getMyRides(driverId);
+
+  // const rides = await DriverService.getMyRides();
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "My current rides retrieved successfully",
+    data: rides,
+  });
+});
+
 
 const updateAvailability = catchAsync(async (req: Request, res: Response) => {
   const user = req.user;
@@ -142,4 +166,5 @@ export const DriverController = {
   getRideHistory,
   updateAvailability,
   getMeDriver,
+  getMyRides,
 };

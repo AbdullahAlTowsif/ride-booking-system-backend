@@ -35,6 +35,16 @@ const getAvailableRides = async () => {
   return availableRides;
 };
 
+const getMyRides = async (userId: string) => {
+  const driver = await Driver.findById(userId);
+  // console.log(driver?._id);
+  const myRides = await Ride.find({
+    driver: driver?._id,
+  }).sort({ createdAt: -1 });
+
+  return myRides;
+};
+
 const acceptRide = async (rideId: string, driverUserId: string) => {
   const driver = await Driver.findOne({ user: driverUserId });
 
@@ -228,4 +238,5 @@ export const DriverService = {
   getRideHistory,
   updateAvailability,
   getMeDriver,
+  getMyRides,
 };
