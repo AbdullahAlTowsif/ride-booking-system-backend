@@ -4,6 +4,7 @@ import AppError from "../../errorHelpers/AppError";
 import httpStatus from "http-status-codes";
 import { Ride } from "../ride/ride.model";
 import { RideStatus } from "../ride/ride.interface";
+import { User } from "../user/user.model";
 
 const applyToBeDriver = async (userId: string, payload: Partial<IDriver>) => {
   const isAlreadyDriver = await Driver.findOne({ user: userId });
@@ -229,6 +230,44 @@ const getRideHistory = async (userId: string) => {
   };
 };
 
+const getDriverProfile = async (userId: string) => {
+  const driver = await Driver.findOne({ user: userId }).populate("user");
+  if (!driver)
+    throw new AppError(httpStatus.NOT_FOUND, "Driver profile not found");
+  return driver;
+};
+
+const updateDriverProfile = async (
+  userId: string,
+  payload: {
+    name?: string;
+    phone?: string;
+    address?: string;
+    vehicleType?: string;
+    vehicleNumber?: string;
+  }
+) => {
+  const driver = await Driver.findOne({ user: userId });
+  if (!driver) throw new AppError(httpStatus.NOT_FOUND, "Driver not found");
+
+  const user = await User.findById(userId);
+  if (!user) throw new AppError(httpStatus.NOT_FOUND, "User not found");
+
+  // Update user fields
+  if (payload.name) user.name = payload.name;
+  if (payload.phone) user.phone = payload.phone;
+  if (payload.address) user.address = payload.address;
+
+  // Update driver fields
+  if (payload.vehicleType) driver.vehicleType = payload.vehicleType;
+  if (payload.vehicleNumber) driver.vehicleNumber = payload.vehicleNumber;
+
+  await user.save();
+  await driver.save();
+
+  return { user, driver };
+};
+
 export const DriverService = {
   applyToBeDriver,
   getAvailableRides,
@@ -239,4 +278,6 @@ export const DriverService = {
   updateAvailability,
   getMeDriver,
   getMyRides,
+  getDriverProfile,
+  updateDriverProfile,
 };

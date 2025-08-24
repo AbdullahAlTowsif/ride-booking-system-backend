@@ -16,5 +16,7 @@ router.get("/earning-history", checkAuth(Role.DRIVER), DriverController.getRideH
 router.patch("/availability", checkAuth(Role.DRIVER), DriverController.updateAvailability);
 router.get("/me-driver", checkAuth(Role.DRIVER), DriverController.getMeDriver);
 router.get("/my-rides", checkAuth(Role.DRIVER), DriverController.getMyRides);
+router.get("/profile", checkAuth(Role.DRIVER), DriverController.getDriverProfile);
+router.patch("/update-driver-profile", checkAuth(Role.DRIVER), DriverController.updateDriverProfile);
 
 export const DriverRoutes = router;

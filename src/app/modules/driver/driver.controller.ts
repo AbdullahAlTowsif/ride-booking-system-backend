@@ -156,6 +156,36 @@ const getRideHistory = catchAsync(async (req: Request, res: Response) => {
 });
 
 
+const getDriverProfile = catchAsync(async (req, res) => {
+  const user = req.user;
+  const {userId} = user as JwtPayload;
+
+  const result = await DriverService.getDriverProfile(userId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Driver profile fetched successfully",
+    data: result,
+  });
+});
+
+
+const updateDriverProfile = catchAsync(async (req, res) => {
+  const user = req.user;
+  const {userId} = user as JwtPayload;
+
+  const result = await DriverService.updateDriverProfile(userId, req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Driver profile updated successfully",
+    data: result,
+  });
+});
+
+
 
 export const DriverController = {
   applyToBeDriver,
@@ -167,4 +197,6 @@ export const DriverController = {
   updateAvailability,
   getMeDriver,
   getMyRides,
+  getDriverProfile,
+  updateDriverProfile,
 };
