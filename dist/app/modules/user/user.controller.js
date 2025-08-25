@@ -17,8 +17,13 @@ const catchAsync_1 = require("../../utils/catchAsync");
 const user_service_1 = require("./user.service");
 const sendResponse_1 = require("../../utils/sendResponse");
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
+const userTokens_1 = require("../../utils/userTokens");
+const setCookie_1 = require("../../utils/setCookie");
 const createUser = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield user_service_1.UserService.createUser(req.body);
+    // changed while doing frontend: now register users are counted as logged in user
+    const userTokens = yield (0, userTokens_1.createUserTokens)(user);
+    (0, setCookie_1.setAuthCookie)(res, userTokens);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
         statusCode: http_status_codes_1.default.CREATED,
@@ -38,7 +43,18 @@ const updateUser = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(vo
         data: user,
     });
 }));
+const getMe = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const decodedToken = req.user;
+    const result = yield user_service_1.UserService.getMe(decodedToken.userId);
+    (0, sendResponse_1.sendResponse)(res, {
+        success: true,
+        statusCode: http_status_codes_1.default.OK,
+        message: "Your Profile Retrieved Successfully",
+        data: result.data
+    });
+}));
 exports.UserControllers = {
     createUser,
     updateUser,
+    getMe,
 };

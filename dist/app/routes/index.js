@@ -7,6 +7,8 @@ const auth_route_1 = require("../modules/auth/auth.route");
 const ride_route_1 = require("../modules/ride/ride.route");
 const driver_route_1 = require("../modules/driver/driver.route");
 const admin_route_1 = require("../modules/admin/admin.route");
+const alert_route_1 = require("../modules/alert/alert.route");
+const safetyContact_route_1 = require("../modules/safetyContact/safetyContact.route");
 exports.router = (0, express_1.Router)();
 const moduleRoutes = [
     {
@@ -28,6 +30,14 @@ const moduleRoutes = [
     {
         path: "/admin",
         route: admin_route_1.AdminRoutes
+    },
+    {
+        path: "/alert",
+        route: alert_route_1.AlertRoutes
+    },
+    {
+        path: "/safetyContact",
+        route: safetyContact_route_1.SafetyContactRoutes
     }
 ];
 moduleRoutes.forEach((route) => {

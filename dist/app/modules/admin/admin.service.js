@@ -21,6 +21,8 @@ const user_model_1 = require("../user/user.model");
 const user_interface_1 = require("../user/user.interface");
 const ride_model_1 = require("../ride/ride.model");
 const ride_interface_1 = require("../ride/ride.interface");
+const QueryBuilder_1 = require("../../utils/QueryBuilder");
+const admin_constant_1 = require("./admin.constant");
 const approveDriver = (driverId) => __awaiter(void 0, void 0, void 0, function* () {
     const existingDriver = yield driver_model_1.Driver.findById(driverId);
     if (!existingDriver) {
@@ -70,15 +72,35 @@ const unblockUser = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     yield existingUser.save();
     return existingUser;
 });
-const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
-    return yield user_model_1.User.find().select("-password");
+const getAllUsers = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    // return await User.find().select("-password");
+    const queryBuilder = new QueryBuilder_1.QueryBuilder(user_model_1.User.find(), query);
+    const users = yield queryBuilder.search(admin_constant_1.userSearchableFields).filter().sort().fields().paginate();
+    const [data, meta] = yield Promise.all([
+        users.build(),
+        queryBuilder.getMeta()
+    ]);
+    return {
+        data, meta
+    };
 });
 const getAllDrivers = () => __awaiter(void 0, void 0, void 0, function* () {
     return yield driver_model_1.Driver.find().populate("user", "-password");
 });
-const getAllRides = () => __awaiter(void 0, void 0, void 0, function* () {
-    return yield ride_model_1.Ride.find().populate("rider", "-password").populate("driver");
+const getAllRides = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const queryBuilder = new QueryBuilder_1.QueryBuilder(ride_model_1.Ride.find(), query);
+    const rides = yield queryBuilder.search(admin_constant_1.ridesSearchableFields).filter().sort().fields().paginate();
+    const [data, meta] = yield Promise.all([
+        rides.build(),
+        queryBuilder.getMeta()
+    ]);
+    return {
+        data, meta
+    };
 });
+// const getAllRides = async () => {
+//   return await Ride.find().populate("rider", "-password").populate("driver")
+// };
 const generateAdminReport = () => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const [totalUsers, totalDrivers, totalRides, completedRides, ongoingRides, earningsData,] = yield Promise.all([

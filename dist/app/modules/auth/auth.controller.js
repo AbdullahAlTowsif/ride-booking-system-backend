@@ -101,6 +101,18 @@ const setPassword = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(v
         data: null,
     });
 }));
+const changePassword = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const newPassword = req.body.newPassword;
+    const oldPassword = req.body.oldPassword;
+    const decodedToken = req.user;
+    yield auth_service_1.AuthService.changePassword(oldPassword, newPassword, decodedToken);
+    (0, sendResponse_1.sendResponse)(res, {
+        success: true,
+        statusCode: http_status_codes_1.default.OK,
+        message: "Password changed Successfully",
+        data: null,
+    });
+}));
 const googleCallbackController = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     let redirectTo = req.query.state ? req.query.state : "";
     if (redirectTo.startsWith("/")) {
@@ -120,4 +132,5 @@ exports.AuthController = {
     googleCallbackController,
     logout,
     setPassword,
+    changePassword,
 };

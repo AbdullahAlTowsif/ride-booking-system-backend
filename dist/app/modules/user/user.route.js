@@ -10,4 +10,6 @@ const user_interface_1 = require("./user.interface");
 const router = (0, express_1.Router)();
 router.post("/register", (0, validateRequests_1.validateRequest)(user_validation_1.createUserZodSchema), user_controller_1.UserControllers.createUser);
 router.patch("/:id", (0, validateRequests_1.validateRequest)(user_validation_1.updateUserZodSchema), (0, checkAuth_1.checkAuth)(...Object.values(user_interface_1.Role)), user_controller_1.UserControllers.updateUser);
+// changed while doing frontend
+router.get("/me", (0, checkAuth_1.checkAuth)(...Object.values(user_interface_1.Role)), user_controller_1.UserControllers.getMe);
 exports.UserRoutes = router;

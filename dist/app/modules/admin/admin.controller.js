@@ -59,14 +59,25 @@ const unblockUser = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(v
     });
 }));
 const getAllUsers = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const users = yield admin_service_1.AdminService.getAllUsers();
+    const query = req.query;
+    const result = yield admin_service_1.AdminService.getAllUsers(query);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
         statusCode: http_status_codes_1.default.OK,
         message: "Users fetched successfully",
-        data: users,
+        data: result.data,
+        meta: result.meta
     });
 }));
+// const getAllUsers = catchAsync(async (req: Request, res: Response) => {
+//   const users = await AdminService.getAllUsers();
+//   sendResponse(res, {
+//     success: true,
+//     statusCode: httpStatus.OK,
+//     message: "Users fetched successfully",
+//     data: users,
+//   });
+// });
 const getAllDrivers = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const drivers = yield admin_service_1.AdminService.getAllDrivers();
     (0, sendResponse_1.sendResponse)(res, {
@@ -77,14 +88,25 @@ const getAllDrivers = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 
     });
 }));
 const getAllRides = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const rides = yield admin_service_1.AdminService.getAllRides();
+    const query = req.query;
+    const result = yield admin_service_1.AdminService.getAllRides(query);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
         statusCode: http_status_codes_1.default.OK,
-        message: "Rides fetched successfully",
-        data: rides,
+        message: "All Rides fetched successfully",
+        data: result.data,
+        meta: result.meta
     });
 }));
+// const getAllRides = catchAsync(async (req: Request, res: Response) => {
+//   const rides = await AdminService.getAllRides();
+//   sendResponse(res, {
+//     success: true,
+//     statusCode: httpStatus.OK,
+//     message: "Rides fetched successfully",
+//     data: rides,
+//   });
+// });
 exports.getAdminReport = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const report = yield (0, admin_service_1.generateAdminReport)();
     (0, sendResponse_1.sendResponse)(res, {

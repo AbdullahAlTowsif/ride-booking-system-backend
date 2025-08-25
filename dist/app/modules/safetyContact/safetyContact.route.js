@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SafetyContactRoutes = void 0;
+const express_1 = require("express");
+const safetyContact_controller_1 = require("./safetyContact.controller");
+const user_interface_1 = require("../user/user.interface");
+const checkAuth_1 = require("../../middlewares/checkAuth");
+const router = (0, express_1.Router)();
+router.get("/", (0, checkAuth_1.checkAuth)(user_interface_1.Role.RIDER), safetyContact_controller_1.SafetyContactController.getContacts);
+router.post("/", (0, checkAuth_1.checkAuth)(user_interface_1.Role.RIDER), safetyContact_controller_1.SafetyContactController.saveContacts);
+exports.SafetyContactRoutes = router;

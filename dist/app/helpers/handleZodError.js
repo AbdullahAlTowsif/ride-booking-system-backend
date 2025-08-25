@@ -12,7 +12,7 @@ const handleZodError = (error) => {
     });
     return {
         statusCode: 400,
-        message: "Zode Error",
+        message: "Zod Error",
         errorSources,
     };
 };

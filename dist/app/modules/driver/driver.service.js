@@ -19,6 +19,7 @@ const AppError_1 = __importDefault(require("../../errorHelpers/AppError"));
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
 const ride_model_1 = require("../ride/ride.model");
 const ride_interface_1 = require("../ride/ride.interface");
+const user_model_1 = require("../user/user.model");
 const applyToBeDriver = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const isAlreadyDriver = yield driver_model_1.Driver.findOne({ user: userId });
     if (isAlreadyDriver) {
@@ -39,6 +40,14 @@ const getAvailableRides = () => __awaiter(void 0, void 0, void 0, function* () {
         status: ride_interface_1.RideStatus.REQUESTED,
     }).sort({ createdAt: -1 });
     return availableRides;
+});
+const getMyRides = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const driver = yield driver_model_1.Driver.findById(userId);
+    // console.log(driver?._id);
+    const myRides = yield ride_model_1.Ride.find({
+        driver: driver === null || driver === void 0 ? void 0 : driver._id,
+    }).sort({ createdAt: -1 });
+    return myRides;
 });
 const acceptRide = (rideId, driverUserId) => __awaiter(void 0, void 0, void 0, function* () {
     const driver = yield driver_model_1.Driver.findOne({ user: driverUserId });
@@ -129,6 +138,27 @@ const updateRideStatus = (rideId, driverUserId) => __awaiter(void 0, void 0, voi
     }
     return ride;
 });
+const updateAvailability = (userId, status) => __awaiter(void 0, void 0, void 0, function* () {
+    const driver = yield driver_model_1.Driver.findOne({ user: userId });
+    if (!driver) {
+        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "Driver profile not found");
+    }
+    if (driver.approvalStatus === driver_interface_1.IsApprove.SUSPENDED ||
+        driver.approvalStatus === driver_interface_1.IsApprove.BLOCKED ||
+        driver.approvalStatus === driver_interface_1.IsApprove.PENDING) {
+        throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, `You're ${driver.approvalStatus} Driver. You're not allowed to do this.`);
+    }
+    driver.availabilityStatus = status;
+    yield driver.save();
+    return driver;
+});
+const getMeDriver = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    // console.log(userId);
+    const driver = yield driver_model_1.Driver.findOne({ user: userId });
+    return {
+        data: driver,
+    };
+});
 const getRideHistory = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     const driver = yield driver_model_1.Driver.findOne({ user: userId });
     if (!driver) {
@@ -142,6 +172,35 @@ const getRideHistory = (userId) => __awaiter(void 0, void 0, void 0, function* (
         rides,
     };
 });
+const getDriverProfile = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const driver = yield driver_model_1.Driver.findOne({ user: userId }).populate("user");
+    if (!driver)
+        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "Driver profile not found");
+    return driver;
+});
+const updateDriverProfile = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const driver = yield driver_model_1.Driver.findOne({ user: userId });
+    if (!driver)
+        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "Driver not found");
+    const user = yield user_model_1.User.findById(userId);
+    if (!user)
+        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "User not found");
+    // Update user fields
+    if (payload.name)
+        user.name = payload.name;
+    if (payload.phone)
+        user.phone = payload.phone;
+    if (payload.address)
+        user.address = payload.address;
+    // Update driver fields
+    if (payload.vehicleType)
+        driver.vehicleType = payload.vehicleType;
+    if (payload.vehicleNumber)
+        driver.vehicleNumber = payload.vehicleNumber;
+    yield user.save();
+    yield driver.save();
+    return { user, driver };
+});
 exports.DriverService = {
     applyToBeDriver,
     getAvailableRides,
@@ -149,4 +208,9 @@ exports.DriverService = {
     rejectRide,
     updateRideStatus,
     getRideHistory,
+    updateAvailability,
+    getMeDriver,
+    getMyRides,
+    getDriverProfile,
+    updateDriverProfile,
 };

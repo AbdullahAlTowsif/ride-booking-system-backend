@@ -24,6 +24,7 @@ router.post("/login", auth_controller_1.AuthController.credentialsLogin);
 router.post("/refresh-token", auth_controller_1.AuthController.getNewAccessToken);
 router.post("/logout", auth_controller_1.AuthController.logout);
 router.post("/set-password", (0, checkAuth_1.checkAuth)(...Object.values(user_interface_1.Role)), auth_controller_1.AuthController.setPassword);
+router.post("/change-password", (0, checkAuth_1.checkAuth)(...Object.values(user_interface_1.Role)), auth_controller_1.AuthController.changePassword);
 router.get("/google", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const redirect = req.query.redirect || "/";
     passport_1.default.authenticate("google", {
