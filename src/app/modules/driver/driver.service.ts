@@ -56,34 +56,28 @@ const acceptRide = async (rideId: string, driverUserId: string) => {
   if (driver.approvalStatus === IsApprove.SUSPENDED) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      "You are a SUSPENDED Driver. You cann't accept Request"
+      "You are a SUSPENDED Driver. You cannot accept Request"
     );
   }
 
-  const ride = await Ride.findById(rideId);
+  const ride = await Ride.findOneAndUpdate(
+    { _id: rideId, status: RideStatus.REQUESTED, driver: null },
+    {
+      $set: {
+        driver: driver._id,
+        status: RideStatus.ACCEPTED,
+        "timestamps.acceptedAt": new Date(),
+      },
+    },
+    { new: true }
+  );
 
   if (!ride) {
-    throw new AppError(httpStatus.NOT_FOUND, "Ride not found");
-  }
-
-  if (ride.status !== RideStatus.REQUESTED) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
       "Ride is not available for acceptance"
     );
   }
-
-  if (ride.driver) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      "Ride already assigned to a driver"
-    );
-  }
-
-  ride.driver = driver._id;
-  ride.status = RideStatus.ACCEPTED;
-  ride.timestamps.acceptedAt = new Date();
-  await ride.save();
 
   driver.availabilityStatus = IsAvailable.OFFLINE;
   await driver.save();

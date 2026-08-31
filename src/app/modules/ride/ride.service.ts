@@ -3,6 +3,9 @@ import { Ride } from "./ride.model";
 import AppError from "../../errorHelpers/AppError";
 import httpStatus from "http-status-codes";
 import { isValidObjectId } from "mongoose";
+import { Driver } from "../driver/driver.model";
+import { IsAvailable } from "../driver/driver.interface";
+
 
 const createRide = async (riderId: string, payload: Partial<IRide>) => {
   if (!riderId) {
@@ -75,6 +78,15 @@ const cancelRide = async (rideId: string, riderId: string) => {
   ride.timestamps.cancelledAt = new Date();
 
   await ride.save();
+
+  // Restore driver availability if a driver was assigned
+  if (ride.driver) {
+    await Driver.findOneAndUpdate(
+      { user: ride.driver },
+      { $set: { availabilityStatus: IsAvailable.ONLINE } }
+    );
+  }
+
 
   return ride;
 };

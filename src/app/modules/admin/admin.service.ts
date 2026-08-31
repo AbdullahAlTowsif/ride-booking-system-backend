@@ -43,6 +43,9 @@ const suspendDriver = async (driverId: string) => {
   existingDriver.approvalStatus = IsApprove.SUSPENDED;
   await existingDriver.save();
 
+  // Revert user role back to RIDER
+  await User.findByIdAndUpdate(existingDriver.user, { role: Role.RIDER });
+
   return existingDriver;
 };
 

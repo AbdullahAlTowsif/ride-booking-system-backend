@@ -7,7 +7,7 @@ import { createDriverZodSchema } from "./driver.validation";
 
 const router = Router();
 
-router.post("/apply-driver", checkAuth(Role.RIDER), DriverController.applyToBeDriver, validateRequest(createDriverZodSchema));
+router.post("/apply-driver", checkAuth(Role.RIDER), validateRequest(createDriverZodSchema), DriverController.applyToBeDriver);
 router.get("/rides-available", checkAuth(Role.DRIVER), DriverController.getAvailableRides);
 router.patch("/rides/:id/accept", checkAuth(Role.DRIVER), DriverController.acceptRide);
 router.patch("/rides/:id/reject", checkAuth(Role.DRIVER), DriverController.rejectRide);

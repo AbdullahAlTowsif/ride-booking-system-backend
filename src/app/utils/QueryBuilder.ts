@@ -4,12 +4,12 @@ import { excludeField } from "../constants";
 export class QueryBuilder<T> {
     public modelQuery: Query<T[], T>;
     public readonly query: Record<string, string>
+    private _filterConditions: Record<string, unknown> = {};
 
     constructor(modelQuery: Query<T[], T>, query: Record<string, string>) {
         this.modelQuery = modelQuery;
         this.query = query;
     }
-
 
     filter(): this {
         const filter = { ...this.query }
@@ -19,7 +19,8 @@ export class QueryBuilder<T> {
             delete filter[field]
         }
 
-        this.modelQuery = this.modelQuery.find(filter) // Tour.find().find(filter)
+        this._filterConditions = { ...filter };
+        this.modelQuery = this.modelQuery.find(filter)
 
         return this;
     }
@@ -29,6 +30,7 @@ export class QueryBuilder<T> {
         const searchQuery = {
             $or: searchableField.map(field => ({ [field]: { $regex: searchTerm, $options: "i" } }))
         }
+        this._filterConditions = { ...this._filterConditions, ...searchQuery };
         this.modelQuery = this.modelQuery.find(searchQuery)
         return this
     }
@@ -65,7 +67,7 @@ export class QueryBuilder<T> {
     }
 
     async getMeta() {
-        const totalDocuments = await this.modelQuery.model.countDocuments()
+        const totalDocuments = await this.modelQuery.model.countDocuments(this._filterConditions)
 
         const page = Number(this.query.page) || 1
         const limit = Number(this.query.limit) || 10

@@ -92,18 +92,15 @@ passport.use(
         let isUserExist = await User.findOne({ email });
 
         if (isUserExist && !isUserExist.isVerified) {
-          return done(null, false, {message: "User is not Verified"})
+          return done(null, false, { message: "User is not Verified" })
         }
 
-        if (
-          isUserExist &&
-          (isUserExist.isBlock === IsBlock.BLOCK)
-        ) {
-          done(`User is Blocked`);
+        if (isUserExist && (isUserExist.isBlock === IsBlock.BLOCK)) {
+          return done(`User is Blocked`);
         }
 
         if (isUserExist && isUserExist.isDeleted) {
-          return done(null, false, {message: "User is deleted"});
+          return done(null, false, { message: "User is deleted" });
         }
 
         if (!isUserExist) {

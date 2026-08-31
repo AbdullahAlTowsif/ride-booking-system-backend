@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { envVars } from "../../config/env";
 import { createNewAccessTokenWithRefreshToken } from "../../utils/userTokens";
 import { IAuthProvider } from "../user/user.interface";
@@ -61,23 +60,28 @@ const changePassword = async (
 ) => {
   const user = await User.findById(decodedToken.userId);
 
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User Not Found");
+  }
+
   const isOldPasswordMatch = await bcryptjs.compare(
     oldPassword,
-    user!.password as string
+    user.password as string
   );
   if (!isOldPasswordMatch) {
     throw new AppError(httpStatus.UNAUTHORIZED, "Old Password does not match");
   }
 
-  user!.password = await bcryptjs.hash(
+  user.password = await bcryptjs.hash(
     newPassword,
     Number(envVars.BCRYPT_SALT_ROUND)
   );
-  user!.save();
+  await user.save();
+
 };
 
 export const AuthService = {
-    getNewAccessToken,
-    setPassword,
-    changePassword,
+  getNewAccessToken,
+  setPassword,
+  changePassword,
 }
