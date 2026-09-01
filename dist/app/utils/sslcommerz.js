@@ -42,9 +42,18 @@ const verifySignature = (body, verifyKey, verifySign) => {
         return false;
     }
     const keys = verifyKey.split(",");
-    const signString = keys
-        .map((key) => { var _a; return `${key}=${(_a = body[key]) !== null && _a !== void 0 ? _a : ""}`; })
-        .join("&");
+    const data = {};
+    for (const key of keys) {
+        if (body[key] !== undefined) {
+            data[key] = body[key];
+        }
+    }
+    data["store_passwd"] = crypto_1.default
+        .createHash("md5")
+        .update(env_1.envVars.SSL_STORE_PASS)
+        .digest("hex");
+    const sortedKeys = Object.keys(data).sort(); // alphabetical, matches PHP ksort
+    const signString = sortedKeys.map((key) => `${key}=${data[key]}`).join("&");
     const expected = crypto_1.default.createHash("md5").update(signString).digest("hex");
     return expected === verifySign;
 };

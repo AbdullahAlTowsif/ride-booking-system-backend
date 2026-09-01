@@ -86,6 +86,7 @@ const initiate = (riderId, rideId) => __awaiter(void 0, void 0, void 0, function
     const cusPayload = yield refineCusPayload(riderId);
     const tranId = generateTranId(ride._id.toString());
     const session = yield (0, sslcommerz_1.initiateSession)(Object.assign({ total_amount: String(ride.fare), tran_id: tranId, success_url: env_1.envVars.SSL_SUCCESS_BACKEND_URL, fail_url: env_1.envVars.SSL_FAIL_BACKEND_URL, cancel_url: env_1.envVars.SSL_CANCEL_BACKEND_URL, ipn_url: env_1.envVars.SSL_IPN_URL, product_name: "Ride Booking", product_category: "Ride", product_profile: "general", value_a: ride._id.toString() }, cusPayload));
+    // console.log(session);
     if (session.status !== "SUCCESS") {
         throw new AppError_1.default(http_status_codes_1.default.BAD_GATEWAY, session.status_message || "Failed to create payment session");
     }
