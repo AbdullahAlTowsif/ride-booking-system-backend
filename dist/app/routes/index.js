@@ -9,6 +9,7 @@ const driver_route_1 = require("../modules/driver/driver.route");
 const admin_route_1 = require("../modules/admin/admin.route");
 const alert_route_1 = require("../modules/alert/alert.route");
 const safetyContact_route_1 = require("../modules/safetyContact/safetyContact.route");
+const payment_route_1 = require("../modules/payment/payment.route");
 exports.router = (0, express_1.Router)();
 const moduleRoutes = [
     {
@@ -38,6 +39,10 @@ const moduleRoutes = [
     {
         path: "/safetyContact",
         route: safetyContact_route_1.SafetyContactRoutes
+    },
+    {
+        path: "/payments",
+        route: payment_route_1.PaymentRoutes
     }
 ];
 moduleRoutes.forEach((route) => {

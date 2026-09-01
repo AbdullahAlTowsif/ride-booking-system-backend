@@ -13,6 +13,7 @@ exports.QueryBuilder = void 0;
 const constants_1 = require("../constants");
 class QueryBuilder {
     constructor(modelQuery, query) {
+        this._filterConditions = {};
         this.modelQuery = modelQuery;
         this.query = query;
     }
@@ -22,7 +23,8 @@ class QueryBuilder {
             // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
             delete filter[field];
         }
-        this.modelQuery = this.modelQuery.find(filter); // Tour.find().find(filter)
+        this._filterConditions = Object.assign({}, filter);
+        this.modelQuery = this.modelQuery.find(filter);
         return this;
     }
     search(searchableField) {
@@ -30,6 +32,7 @@ class QueryBuilder {
         const searchQuery = {
             $or: searchableField.map(field => ({ [field]: { $regex: searchTerm, $options: "i" } }))
         };
+        this._filterConditions = Object.assign(Object.assign({}, this._filterConditions), searchQuery);
         this.modelQuery = this.modelQuery.find(searchQuery);
         return this;
     }
@@ -56,7 +59,7 @@ class QueryBuilder {
     }
     getMeta() {
         return __awaiter(this, void 0, void 0, function* () {
-            const totalDocuments = yield this.modelQuery.model.countDocuments();
+            const totalDocuments = yield this.modelQuery.model.countDocuments(this._filterConditions);
             const page = Number(this.query.page) || 1;
             const limit = Number(this.query.limit) || 10;
             const totalPage = Math.ceil(totalDocuments / limit);

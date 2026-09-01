@@ -53,7 +53,7 @@ exports.updateUserZodSchema = zod_1.default.object({
     role: zod_1.default
         .enum(Object.values(user_interface_1.Role))
         .optional(),
-    IsBlock: zod_1.default
+    isBlock: zod_1.default
         .enum(Object.values(user_interface_1.IsBlock))
         .optional(),
     isDeleted: zod_1.default

@@ -55,22 +55,18 @@ const acceptRide = (rideId, driverUserId) => __awaiter(void 0, void 0, void 0, f
         throw new AppError_1.default(http_status_codes_1.default.FORBIDDEN, "Driver profile not found");
     }
     if (driver.approvalStatus === driver_interface_1.IsApprove.SUSPENDED) {
-        throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "You are a SUSPENDED Driver. You cann't accept Request");
+        throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "You are a SUSPENDED Driver. You cannot accept Request");
     }
-    const ride = yield ride_model_1.Ride.findById(rideId);
+    const ride = yield ride_model_1.Ride.findOneAndUpdate({ _id: rideId, status: ride_interface_1.RideStatus.REQUESTED, driver: null }, {
+        $set: {
+            driver: driver._id,
+            status: ride_interface_1.RideStatus.ACCEPTED,
+            "timestamps.acceptedAt": new Date(),
+        },
+    }, { new: true });
     if (!ride) {
-        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "Ride not found");
-    }
-    if (ride.status !== ride_interface_1.RideStatus.REQUESTED) {
         throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "Ride is not available for acceptance");
     }
-    if (ride.driver) {
-        throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "Ride already assigned to a driver");
-    }
-    ride.driver = driver._id;
-    ride.status = ride_interface_1.RideStatus.ACCEPTED;
-    ride.timestamps.acceptedAt = new Date();
-    yield ride.save();
     driver.availabilityStatus = driver_interface_1.IsAvailable.OFFLINE;
     yield driver.save();
     return ride;
@@ -124,8 +120,6 @@ const updateRideStatus = (rideId, driverUserId) => __awaiter(void 0, void 0, voi
     else if (ride.status === ride_interface_1.RideStatus.IN_TRANSIT) {
         newStatus = ride_interface_1.RideStatus.COMPLETED;
         ride.timestamps.completedAt = new Date();
-        driver.earnings += ride.fare;
-        ride.isPaid = true;
     }
     else {
         throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, `Invalid ride status transition from ${ride.status}`);

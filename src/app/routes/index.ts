@@ -6,6 +6,7 @@ import { DriverRoutes } from "../modules/driver/driver.route";
 import { AdminRoutes } from "../modules/admin/admin.route";
 import { AlertRoutes } from "../modules/alert/alert.route";
 import { SafetyContactRoutes } from "../modules/safetyContact/safetyContact.route";
+import { PaymentRoutes } from "../modules/payment/payment.route";
 
 export const router = Router();
 
@@ -37,6 +38,10 @@ const moduleRoutes = [
     {
         path: "/safetyContact",
         route: SafetyContactRoutes
+    },
+    {
+        path: "/payments",
+        route: PaymentRoutes
     }
 ];
 

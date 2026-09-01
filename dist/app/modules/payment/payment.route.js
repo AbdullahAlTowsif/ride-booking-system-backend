@@ -1,0 +1,18 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PaymentRoutes = void 0;
+const express_1 = require("express");
+const checkAuth_1 = require("../../middlewares/checkAuth");
+const validateRequests_1 = require("../../middlewares/validateRequests");
+const user_interface_1 = require("../user/user.interface");
+const payment_controller_1 = require("./payment.controller");
+const payment_validation_1 = require("./payment.validation");
+const router = (0, express_1.Router)();
+router.post("/initiate", (0, checkAuth_1.checkAuth)(user_interface_1.Role.RIDER), (0, validateRequests_1.validateRequest)(payment_validation_1.initiatePaymentZodSchema), payment_controller_1.PaymentController.initiate);
+router.post("/ipn", payment_controller_1.PaymentController.handleIpn);
+router.post("/success", payment_controller_1.PaymentController.handleSuccess);
+router.post("/fail", payment_controller_1.PaymentController.handleFail);
+router.post("/cancel", payment_controller_1.PaymentController.handleCancel);
+router.get("/:rideId/status", (0, checkAuth_1.checkAuth)(user_interface_1.Role.RIDER, user_interface_1.Role.ADMIN), payment_controller_1.PaymentController.getRideStatus);
+router.get("/me", (0, checkAuth_1.checkAuth)(user_interface_1.Role.RIDER), payment_controller_1.PaymentController.getMyPayments);
+exports.PaymentRoutes = router;
