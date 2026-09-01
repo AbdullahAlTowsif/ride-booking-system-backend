@@ -18,6 +18,8 @@ const ride_model_1 = require("./ride.model");
 const AppError_1 = __importDefault(require("../../errorHelpers/AppError"));
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
 const mongoose_1 = require("mongoose");
+const driver_model_1 = require("../driver/driver.model");
+const driver_interface_1 = require("../driver/driver.interface");
 const createRide = (riderId, payload) => __awaiter(void 0, void 0, void 0, function* () {
     if (!riderId) {
         throw new AppError_1.default(http_status_codes_1.default.UNAUTHORIZED, "Unauthorized access");
@@ -67,6 +69,10 @@ const cancelRide = (rideId, riderId) => __awaiter(void 0, void 0, void 0, functi
     ride.status = ride_interface_1.RideStatus.CANCELLED;
     ride.timestamps.cancelledAt = new Date();
     yield ride.save();
+    // Restore driver availability if a driver was assigned
+    if (ride.driver) {
+        yield driver_model_1.Driver.findOneAndUpdate({ user: ride.driver }, { $set: { availabilityStatus: driver_interface_1.IsAvailable.ONLINE } });
+    }
     return ride;
 });
 const getMyRides = (riderId) => __awaiter(void 0, void 0, void 0, function* () {

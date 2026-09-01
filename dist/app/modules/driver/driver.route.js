@@ -8,7 +8,7 @@ const driver_controller_1 = require("./driver.controller");
 const validateRequests_1 = require("../../middlewares/validateRequests");
 const driver_validation_1 = require("./driver.validation");
 const router = (0, express_1.Router)();
-router.post("/apply-driver", (0, checkAuth_1.checkAuth)(user_interface_1.Role.RIDER), driver_controller_1.DriverController.applyToBeDriver, (0, validateRequests_1.validateRequest)(driver_validation_1.createDriverZodSchema));
+router.post("/apply-driver", (0, checkAuth_1.checkAuth)(user_interface_1.Role.RIDER), (0, validateRequests_1.validateRequest)(driver_validation_1.createDriverZodSchema), driver_controller_1.DriverController.applyToBeDriver);
 router.get("/rides-available", (0, checkAuth_1.checkAuth)(user_interface_1.Role.DRIVER), driver_controller_1.DriverController.getAvailableRides);
 router.patch("/rides/:id/accept", (0, checkAuth_1.checkAuth)(user_interface_1.Role.DRIVER), driver_controller_1.DriverController.acceptRide);
 router.patch("/rides/:id/reject", (0, checkAuth_1.checkAuth)(user_interface_1.Role.DRIVER), driver_controller_1.DriverController.rejectRide);

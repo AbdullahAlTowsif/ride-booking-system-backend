@@ -70,9 +70,8 @@ passport_1.default.use(new passport_google_oauth20_1.Strategy({
         if (isUserExist && !isUserExist.isVerified) {
             return done(null, false, { message: "User is not Verified" });
         }
-        if (isUserExist &&
-            (isUserExist.isBlock === user_interface_1.IsBlock.BLOCK)) {
-            done(`User is Blocked`);
+        if (isUserExist && (isUserExist.isBlock === user_interface_1.IsBlock.BLOCK)) {
+            return done(`User is Blocked`);
         }
         if (isUserExist && isUserExist.isDeleted) {
             return done(null, false, { message: "User is deleted" });

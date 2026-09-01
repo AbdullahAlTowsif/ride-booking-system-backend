@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 const env_1 = require("../../config/env");
 const userTokens_1 = require("../../utils/userTokens");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
@@ -47,12 +46,15 @@ const setPassword = (userId, plainPassword) => __awaiter(void 0, void 0, void 0,
 });
 const changePassword = (oldPassword, newPassword, decodedToken) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield user_model_1.User.findById(decodedToken.userId);
+    if (!user) {
+        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "User Not Found");
+    }
     const isOldPasswordMatch = yield bcryptjs_1.default.compare(oldPassword, user.password);
     if (!isOldPasswordMatch) {
         throw new AppError_1.default(http_status_codes_1.default.UNAUTHORIZED, "Old Password does not match");
     }
     user.password = yield bcryptjs_1.default.hash(newPassword, Number(env_1.envVars.BCRYPT_SALT_ROUND));
-    user.save();
+    yield user.save();
 });
 exports.AuthService = {
     getNewAccessToken,

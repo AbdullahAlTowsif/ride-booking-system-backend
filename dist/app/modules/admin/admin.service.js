@@ -46,6 +46,8 @@ const suspendDriver = (driverId) => __awaiter(void 0, void 0, void 0, function* 
     }
     existingDriver.approvalStatus = driver_interface_1.IsApprove.SUSPENDED;
     yield existingDriver.save();
+    // Revert user role back to RIDER
+    yield user_model_1.User.findByIdAndUpdate(existingDriver.user, { role: user_interface_1.Role.RIDER });
     return existingDriver;
 });
 const blockUser = (userId) => __awaiter(void 0, void 0, void 0, function* () {

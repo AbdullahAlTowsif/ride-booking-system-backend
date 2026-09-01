@@ -23,6 +23,17 @@ const loadEnvVariables = () => {
         "FRONTEND_URL",
         "ADMIN_EMAIL",
         "ADMIN_PASSWORD",
+        "SSL_STORE_ID",
+        "SSL_STORE_PASS",
+        "SSL_PAYMENT_API",
+        "SSL_VALIDATION_API",
+        "SSL_IPN_URL",
+        "SSL_SUCCESS_BACKEND_URL",
+        "SSL_FAIL_BACKEND_URL",
+        "SSL_CANCEL_BACKEND_URL",
+        "SSL_SUCCESS_FRONTEND_URL",
+        "SSL_FAIL_FRONTEND_URL",
+        "SSL_CANCEL_FRONTEND_URL",
     ];
     requiredEnvVariables.forEach((key) => {
         if (!process.env[key]) {
@@ -45,6 +56,17 @@ const loadEnvVariables = () => {
         FRONTEND_URL: process.env.FRONTEND_URL,
         ADMIN_EMAIL: process.env.ADMIN_EMAIL,
         ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
+        SSL_STORE_ID: process.env.SSL_STORE_ID,
+        SSL_STORE_PASS: process.env.SSL_STORE_PASS,
+        SSL_PAYMENT_API: process.env.SSL_PAYMENT_API,
+        SSL_VALIDATION_API: process.env.SSL_VALIDATION_API,
+        SSL_IPN_URL: process.env.SSL_IPN_URL,
+        SSL_SUCCESS_BACKEND_URL: process.env.SSL_SUCCESS_BACKEND_URL,
+        SSL_FAIL_BACKEND_URL: process.env.SSL_FAIL_BACKEND_URL,
+        SSL_CANCEL_BACKEND_URL: process.env.SSL_CANCEL_BACKEND_URL,
+        SSL_SUCCESS_FRONTEND_URL: process.env.SSL_SUCCESS_FRONTEND_URL,
+        SSL_FAIL_FRONTEND_URL: process.env.SSL_FAIL_FRONTEND_URL,
+        SSL_CANCEL_FRONTEND_URL: process.env.SSL_CANCEL_FRONTEND_URL,
     };
 };
 exports.envVars = loadEnvVariables();

@@ -59,6 +59,17 @@ The Ride Booking API supports the following features:
    FRONTEND_URL=your_frontend_url
    ADMIN_EMAIL=your_admin_email
    ADMIN_PASSWORD=your_admin_password
+   SSL_STORE_ID=your_sslcommerz_store_id
+   SSL_STORE_PASS=your_sslcommerz_store_password
+   SSL_PAYMENT_API=https://sandbox.sslcommerz.com/gwprocess/v4/process.php
+   SSL_VALIDATION_API=https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php
+   SSL_IPN_URL=your_backend_ipn_url
+   SSL_SUCCESS_BACKEND_URL=your_backend_success_url
+   SSL_FAIL_BACKEND_URL=your_backend_fail_url
+   SSL_CANCEL_BACKEND_URL=your_backend_cancel_url
+   SSL_SUCCESS_FRONTEND_URL=your_frontend_payment_success_page
+   SSL_FAIL_FRONTEND_URL=your_frontend_payment_fail_page
+   SSL_CANCEL_FRONTEND_URL=your_frontend_payment_cancel_page
    ```
 
 4. **Run the server**
