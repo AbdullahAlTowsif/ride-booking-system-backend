@@ -14,8 +14,28 @@ const env_1 = require("./app/config/env");
 const cors_1 = __importDefault(require("cors"));
 const notFound_1 = __importDefault(require("./app/middlewares/notFound"));
 const app = (0, express_1.default)();
+// app.use(
+//   cors({
+//     origin: envVars.FRONTEND_URL || "http://localhost:5173",
+//     credentials: true,
+//     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+//     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+//   })
+// );
+const allowedOrigins = [
+    env_1.envVars.FRONTEND_URL,
+    "http://localhost:5173",
+].filter(Boolean); // drop undefined if FRONTEND_URL isn't set
 app.use((0, cors_1.default)({
-    origin: env_1.envVars.FRONTEND_URL || "http://localhost:5173",
+    origin: (origin, callback) => {
+        // allow non-browser requests (curl, Postman) with no origin
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        }
+        else {
+            callback(new Error(`Origin ${origin} not allowed by CORS`));
+        }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
