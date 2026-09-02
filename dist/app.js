@@ -25,10 +25,9 @@ const app = (0, express_1.default)();
 const allowedOrigins = [
     env_1.envVars.FRONTEND_URL,
     "http://localhost:5173",
-].filter(Boolean); // drop undefined if FRONTEND_URL isn't set
-app.use((0, cors_1.default)({
+].filter(Boolean);
+const corsMiddleware = (0, cors_1.default)({
     origin: (origin, callback) => {
-        // allow non-browser requests (curl, Postman) with no origin
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         }
@@ -39,7 +38,17 @@ app.use((0, cors_1.default)({
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-}));
+});
+app.use((req, res, next) => {
+    // Skip CORS check entirely for SSLCommerz server-to-server callbacks
+    if (req.path.startsWith("/api/payments/success") ||
+        req.path.startsWith("/api/payments/fail") ||
+        req.path.startsWith("/api/payments/cancel") ||
+        req.path.startsWith("/api/payments/ipn")) {
+        return next();
+    }
+    corsMiddleware(req, res, next);
+});
 app.use((0, express_session_1.default)({
     secret: env_1.envVars.EXPRESS_SESSION_SECRET,
     resave: false,
